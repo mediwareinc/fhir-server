@@ -4,6 +4,7 @@
 // -------------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Hl7.Fhir.ElementModel;
@@ -42,7 +43,7 @@ namespace Microsoft.Health.Fhir.Core.Features.Conformance
         /// <summary>
         /// Populates capability statement with predefined default values.
         /// </summary>
-        ICapabilityStatementBuilder PopulateDefaultResourceInteractions();
+        ICapabilityStatementBuilder PopulateDefaultResourceInteractions(IReadOnlyList<string> supportedResources = null);
 
         /// <summary>
         /// Updates capability statement to latest supported search paramaters by checkin in memory storage for search parameters.

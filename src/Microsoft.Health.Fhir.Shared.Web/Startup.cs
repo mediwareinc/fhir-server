@@ -38,6 +38,7 @@ using Microsoft.Net.Http.Headers;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
+using WellSky.Hss.Fhir.Registration;
 using TelemetryConfiguration = Microsoft.Health.Fhir.Core.Configs.TelemetryConfiguration;
 
 namespace Microsoft.Health.Fhir.Web
@@ -130,6 +131,10 @@ namespace Microsoft.Health.Fhir.Web
                 });
                 services.Configure<SqlRetryServiceOptions>(Configuration.GetSection(SqlRetryServiceOptions.SqlServer));
             }
+            else if (runtimeConfiguration is HssRuntimeConfiguration)
+            {
+                fhirServerBuilder.AddHss();
+            }
         }
 
         private IFhirRuntimeConfiguration AddRuntimeConfiguration(IConfiguration configuration, IFhirServerBuilder fhirServerBuilder)
@@ -144,6 +149,10 @@ namespace Microsoft.Health.Fhir.Web
             else if (KnownDataStores.IsSqlServerDataStore(dataStore))
             {
                 runtimeConfiguration = new AzureHealthDataServicesRuntimeConfiguration();
+            }
+            else if (KnownDataStores.IsHssDataStore(dataStore))
+            {
+                runtimeConfiguration = new HssRuntimeConfiguration();
             }
             else
             {

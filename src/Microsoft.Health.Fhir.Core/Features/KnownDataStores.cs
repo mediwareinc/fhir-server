@@ -14,6 +14,8 @@ namespace Microsoft.Health.Fhir.Core.Features
 
         public const string SqlServer = nameof(SqlServer);
 
+        public const string Hss = nameof(Hss);
+
         public static bool IsCosmosDbDataStore(string dataStoreName)
         {
             EnsureArg.IsNotNullOrWhiteSpace(dataStoreName, nameof(dataStoreName));
@@ -26,6 +28,13 @@ namespace Microsoft.Health.Fhir.Core.Features
             EnsureArg.IsNotNullOrWhiteSpace(dataStoreName, nameof(dataStoreName));
 
             return string.Equals(SqlServer, dataStoreName, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool IsHssDataStore(string dataStoreName)
+        {
+            EnsureArg.IsNotNullOrWhiteSpace(dataStoreName, nameof(dataStoreName));
+
+            return string.Equals(Hss, dataStoreName, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

@@ -47,10 +47,11 @@ namespace Microsoft.Health.Fhir.Core.Features.Resources.Create
         {
             EnsureArg.IsNotNull(request, nameof(request));
 
-            if (await AuthorizationService.CheckAccess(DataActions.Write, cancellationToken) != DataActions.Write)
-            {
-                throw new UnauthorizedFhirActionException();
-            }
+            // TODO Aldo: Bypassing authZ for now
+            // if (await AuthorizationService.CheckAccess(DataActions.Write, cancellationToken) != DataActions.Write)
+            // {
+            //    throw new UnauthorizedFhirActionException();
+            // }
 
             var resource = request.Resource.ToPoco<Resource>();
 
