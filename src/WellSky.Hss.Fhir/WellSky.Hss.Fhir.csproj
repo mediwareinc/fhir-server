@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" />
+    <PackageReference Include="Hl7.Fhir.R4" />
     <PackageReference Include="Microsoft.AspNetCore.Http" />
     <PackageReference Include="Microsoft.Data.SqlClient" />
   </ItemGroup>
