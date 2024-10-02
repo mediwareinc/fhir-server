@@ -131,9 +131,9 @@ namespace Microsoft.Health.Fhir.Web
                 });
                 services.Configure<SqlRetryServiceOptions>(Configuration.GetSection(SqlRetryServiceOptions.SqlServer));
             }
-            else if (runtimeConfiguration is HssRuntimeConfiguration)
+            else if (runtimeConfiguration is AgingAndDisabilityRuntimeConfiguration)
             {
-                fhirServerBuilder.AddHss();
+                fhirServerBuilder.AddAgingAndDisabilityDataStore();
             }
         }
 
@@ -150,9 +150,9 @@ namespace Microsoft.Health.Fhir.Web
             {
                 runtimeConfiguration = new AzureHealthDataServicesRuntimeConfiguration();
             }
-            else if (KnownDataStores.IsHssDataStore(dataStore))
+            else if (KnownDataStores.IsAgingAndDisabilityDataStore(dataStore))
             {
-                runtimeConfiguration = new HssRuntimeConfiguration();
+                runtimeConfiguration = new AgingAndDisabilityRuntimeConfiguration();
             }
             else
             {

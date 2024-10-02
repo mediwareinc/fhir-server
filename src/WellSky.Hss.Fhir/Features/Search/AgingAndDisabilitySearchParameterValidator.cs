@@ -3,7 +3,7 @@
     using Microsoft.Health.Fhir.Core.Features.Search;
     using Microsoft.Health.Fhir.Core.Models;
 
-    internal class HssSearchParameterValidator : IDataStoreSearchParameterValidator
+    internal class AgingAndDisabilitySearchParameterValidator : IDataStoreSearchParameterValidator
     {
         public bool ValidateSearchParameter(SearchParameterInfo searchParameter, out string errorMessage)
         {

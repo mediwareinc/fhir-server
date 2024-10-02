@@ -1,7 +1,7 @@
 ﻿using Hl7.Fhir.Model;
-using WellSky.Hss.Fhir.Features.Storage.AgingAndDisability.DataModels;
+using WellSky.Hss.Fhir.Features.Storage.DataModels;
 
-namespace WellSky.Hss.Fhir.Features.Storage.AgingAndDisability.Mappers
+namespace WellSky.Hss.Fhir.Features.Storage.Mappers
 {
     internal class ConsumerMapper
     {

@@ -1,10 +1,9 @@
-﻿namespace WellSky.Hss.Fhir.Features.Storage.AgingAndDisability
+﻿namespace WellSky.Hss.Fhir.Features.Storage
 {
     using System.Data;
     using System.Transactions;
     using CustomerOrganization;
     using Microsoft.Data.SqlClient;
-    using WellSky.Hss.Fhir.AgingAndDisability;
 
     public sealed class DatabaseConnectionFactory : IDatabaseConnectionFactory
     {

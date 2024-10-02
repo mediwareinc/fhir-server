@@ -1,8 +1,8 @@
-﻿using Microsoft.Health.Fhir.Core.Features.Persistence;
-using Microsoft.Health.Fhir.Core.Models;
-
-namespace WellSky.Hss.Fhir.Features.Storage.AgingAndDisability
+﻿namespace WellSky.Hss.Fhir.Features.Storage
 {
+    using Microsoft.Health.Fhir.Core.Features.Persistence;
+    using Microsoft.Health.Fhir.Core.Models;
+
     public class AgingAndDisabilityFhirRepository : IAgingAndDisabilityFhirRepository
     {
         private readonly IAgingAndDisabilityPatientRepository _patientRepository;

@@ -2,7 +2,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace WellSky.Hss.Fhir.Features.Storage.AgingAndDisability.DataModels
+namespace WellSky.Hss.Fhir.Features.Storage.DataModels
 {
     [ExcludeFromCodeCoverage]
     public class Consumer : BaseModel, IAgingAndDisabilityModel

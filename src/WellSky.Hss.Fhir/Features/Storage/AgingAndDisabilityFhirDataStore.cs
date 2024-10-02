@@ -2,35 +2,31 @@
 {
     using EnsureThat;
     using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
     using Microsoft.Health.Core.Features.Security;
-    using Microsoft.Health.Fhir.Core.Configs;
     using Microsoft.Health.Fhir.Core.Features.Conformance;
     using Microsoft.Health.Fhir.Core.Features.Persistence;
 
-    internal sealed class HssFhirDataStore : IFhirDataStore, IProvideCapability
+    internal sealed class AgingAndDisabilityFhirDataStore : IFhirDataStore, IProvideCapability
     {
-        private readonly ILogger<HssFhirDataStore> _logger;
-        private readonly CoreFeatureConfiguration _coreFeatures;
+        private readonly ILogger<AgingAndDisabilityFhirDataStore> _logger;
         private readonly IClaimsExtractor _claimsExtractor;
-        private readonly IHssFhirRepositoryFactory _hssFhirRepositoryFactory;
+        private readonly IAgingAndDisabilityFhirRepository _fhirRepository;
 
-        public HssFhirDataStore(ILogger<HssFhirDataStore> logger, IOptions<CoreFeatureConfiguration> coreFeatures, IClaimsExtractor claimsExtractor, IHssFhirRepositoryFactory hssRepositoryFactory)
+        public AgingAndDisabilityFhirDataStore(ILogger<AgingAndDisabilityFhirDataStore> logger, IClaimsExtractor claimsExtractor, IAgingAndDisabilityFhirRepository agingAndDisabilityFhirRepository)
         {
             _logger = EnsureArg.IsNotNull(logger, nameof(logger));
-            _coreFeatures = EnsureArg.IsNotNull(coreFeatures?.Value, nameof(coreFeatures));
             _claimsExtractor = EnsureArg.IsNotNull(claimsExtractor, nameof(claimsExtractor));
-            _hssFhirRepositoryFactory = EnsureArg.IsNotNull(hssRepositoryFactory, nameof(hssRepositoryFactory));
+            _fhirRepository = EnsureArg.IsNotNull(agingAndDisabilityFhirRepository, nameof(agingAndDisabilityFhirRepository));
         }
 
         public async Task<ResourceWrapper> GetAsync(ResourceKey key, CancellationToken cancellationToken)
         {
-            return await Repository.GetAsync(key, "218"/*DeploymentId*/, cancellationToken);
+            return await _fhirRepository.GetAsync(key, "218"/*DeploymentId*/, cancellationToken);
         }
 
         public async Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation resource, CancellationToken cancellationToken)
         {
-            return await Repository.UpsertAsync(resource, "218"/*DeploymentId*/, cancellationToken);
+            return await _fhirRepository.UpsertAsync(resource, "218"/*DeploymentId*/, cancellationToken);
         }
 
         public void Build(ICapabilityStatementBuilder builder)
@@ -60,13 +56,11 @@
             //}
         }
 
-        private IHssFhirRepository Repository => _hssFhirRepositoryFactory.Get("AD"/*SystemId*/);
-        private string SystemId => GetClaim("hss.api.systemId.dev"); // TODO Aldo: don't hardcode this and build it using env shortname.
         private string DeploymentId => GetClaim("hss.api.deploymentId.dev"); // TODO Aldo: don't hardcode this and build it using env shortname.
 
         private string GetClaim(string claimKey)
         {
-            // TODO Aldo: Extract() is returning empty even when the Principal claims are there.
+            // TODO Aldo: Extract() is returning empty even when the Principal claims are there. Check PrincipalClaimsExtractor to see why.
             return _claimsExtractor.Extract()?.SingleOrDefault(c => c.Key.Equals(claimKey, StringComparison.Ordinal)).Value;
         }
 

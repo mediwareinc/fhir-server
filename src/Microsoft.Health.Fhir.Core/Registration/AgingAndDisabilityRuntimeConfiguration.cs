@@ -7,9 +7,9 @@ using Microsoft.Health.Fhir.Core.Features;
 
 namespace Microsoft.Health.Fhir.Core.Registration
 {
-    public class HssRuntimeConfiguration : IFhirRuntimeConfiguration
+    public class AgingAndDisabilityRuntimeConfiguration : IFhirRuntimeConfiguration
     {
-        public string DataStore => KnownDataStores.Hss;
+        public string DataStore => KnownDataStores.AgingAndDisability;
 
         public bool IsSelectiveSearchParameterSupported => true;
 

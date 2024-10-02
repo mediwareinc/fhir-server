@@ -1,4 +1,4 @@
-﻿namespace WellSky.Hss.Fhir.Features.Storage.AgingAndDisability.DataModels
+﻿namespace WellSky.Hss.Fhir.Features.Storage.DataModels
 {
     public class BaseModel
     {

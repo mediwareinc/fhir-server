@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
-using WellSky.Hss.Fhir.AgingAndDisability;
-using WellSky.Hss.Fhir.Features.Storage.AgingAndDisability.DataModels;
+using WellSky.Hss.Fhir.Features.Storage.DataModels;
+using WellSky.Hss.Fhir.Features.Storage.InternalRepositories;
 
 namespace WellSky.Hss.Fhir.Features.Storage.AgingAndDisability.InternalRepositories
 {

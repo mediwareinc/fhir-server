@@ -1,4 +1,4 @@
-﻿namespace WellSky.Hss.Fhir.Features.Storage.AgingAndDisability
+﻿namespace WellSky.Hss.Fhir.Features.Storage.FhirRepositories
 {
     using Hl7.Fhir.Serialization;
     using InternalRepositories;
@@ -6,12 +6,12 @@
     using Microsoft.Health.Fhir.Core.Features.Persistence;
     using Microsoft.Health.Fhir.Core.Models;
 
-    public class AgingAndDisabilityPatientRepository : IAgingAndDisabilityFhirRepository
+    public class PatientRepository : IAgingAndDisabilityFhirRepository
     {
         private readonly FhirJsonSerializer _fhirJsonSerializer;
         private readonly IConsumerRepository _consumerRepository;
 
-        public AgingAndDisabilityPatientRepository(FhirJsonSerializer fhirJsonSerializer, IConsumerRepository consumerRepository)
+        public PatientRepository(FhirJsonSerializer fhirJsonSerializer, IConsumerRepository consumerRepository)
         {
             _fhirJsonSerializer = fhirJsonSerializer;
             _consumerRepository = consumerRepository;
@@ -19,6 +19,7 @@
 
         public async Task<ResourceWrapper> GetAsync(ResourceKey key, string deploymentId, CancellationToken cancellationToken)
         {
+            // Implementing Get to test connectivity with CustOrgDB and A%D only
             var consumer = await _consumerRepository.GetAsync(deploymentId, Guid.Parse(key.Id));
             var patient = ConsumerMapper.Map(consumer);
             var resourceJson = await _fhirJsonSerializer.SerializeToStringAsync(patient);
@@ -37,7 +38,7 @@
                 null);
         }
 
-        // TODO Aldo: Assuming this method will only be called from Create requests for now
+        // TODO Aldo: this method will only be called from Create requests for now
         public async Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation resource, string deploymentId, CancellationToken cancellationToken)
         {
             // TODO Aldo: Research how to map ResourceWrapper, do we have everything we need from DB?
@@ -52,7 +53,7 @@
                 null,
                 null,
                 null);
-            return new UpsertOutcome(existingResource, SaveOutcomeType.Created); 
+            return new UpsertOutcome(existingResource, SaveOutcomeType.Created);
         }
     }
 }

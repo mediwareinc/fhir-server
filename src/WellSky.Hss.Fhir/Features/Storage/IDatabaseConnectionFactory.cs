@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace WellSky.Hss.Fhir.AgingAndDisability
+namespace WellSky.Hss.Fhir.Features.Storage
 {
     public interface IDatabaseConnectionFactory
     {

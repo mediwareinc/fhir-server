@@ -1,30 +1,27 @@
-﻿using WellSky.Hss.Fhir.Features.Storage.AgingAndDisability;
-using WellSky.Hss.Fhir.Features.Storage.AgingAndDisability.InternalRepositories;
-
-namespace WellSky.Hss.Fhir.Registration
+﻿namespace WellSky.Hss.Fhir.Registration
 {
-    using AgingAndDisability;
     using CustomerOrganization;
     using EnsureThat;
     using Features.Search;
     using Features.Storage;
-    using Microsoft.AspNetCore.Http;
+    using Features.Storage.AgingAndDisability.InternalRepositories;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Health.Extensions.DependencyInjection;
     using Microsoft.Health.Fhir.Core.Registration;
     using WellSky.Hss.Fhir.Features.Storage.CustomerOrganization;
+    using WellSky.Hss.Fhir.Features.Storage.FhirRepositories;
 
-    public static class FhirServerBuilderHssRegistrationExtensions
+    public static class FhirServerBuilderAdRegistrationExtensions
     {
-        public static IFhirServerBuilder AddHss(this IFhirServerBuilder fhirServerBuilder, Action<HssConfig> configureAction = null)
+        public static IFhirServerBuilder AddAgingAndDisabilityDataStore(this IFhirServerBuilder fhirServerBuilder, Action<AgingAndDisabilityConfig> configureAction = null)
         {
             EnsureArg.IsNotNull(fhirServerBuilder, nameof(fhirServerBuilder));
             IServiceCollection services = fhirServerBuilder.Services;
 
             services.Add(provider =>
                 {
-                    var config = new HssConfig();
+                    var config = new AgingAndDisabilityConfig();
                     provider.GetService<IConfiguration>().GetSection("Hss").Bind(config);
                     configureAction?.Invoke(config);
                     return config;
@@ -32,28 +29,26 @@ namespace WellSky.Hss.Fhir.Registration
                 .Singleton()
                 .AsSelf();
 
-            services.Add<HssFhirDataStore>()
+            services.Add<AgingAndDisabilityFhirDataStore>()
                 .Scoped()
                 .AsSelf()
                 .AsImplementedInterfaces();
 
-            services.Add<HssSearchService>()
+            services.Add<AgingAndDisabilitySearchService>()
                 .Scoped()
                 .AsSelf()
                 .AsImplementedInterfaces();
 
-            services.Add<HssSortingValidator>()
+            services.Add<AgingAndDisabilitySortingValidator>()
                 .Singleton()
                 .AsSelf()
                 .AsImplementedInterfaces();
 
-            services.Add<HssSearchParameterValidator>()
+            services.Add<AgingAndDisabilitySearchParameterValidator>()
                 .Singleton()
                 .AsSelf()
                 .AsImplementedInterfaces();
 
-            // TODO Aldo: Configuring new HSS storage dependencies here
-            // TODO Aldo: Currently all classes under folders in WellSky.Hss.Fhir. Ideally, we want to have separate projs for each of them but need to take care of circular refs.
             services.Add<DatabaseConnectionFactory>()
                 .Scoped()
                 .AsSelf()
@@ -69,7 +64,7 @@ namespace WellSky.Hss.Fhir.Registration
                 .AsSelf()
                 .AsImplementedInterfaces();
 
-            services.Add<AgingAndDisabilityPatientRepository>()
+            services.Add<PatientRepository>()
                 .Scoped()
                 .AsSelf()
                 .AsImplementedInterfaces();
@@ -83,21 +78,6 @@ namespace WellSky.Hss.Fhir.Registration
                 .Scoped()
                 .AsSelf()
                 .AsImplementedInterfaces();
-
-            services.AddSingleton<IHssFhirRepositoryFactory>(incomingServiceProvider =>
-            {
-                // The incoming serviceProvider isn't the scoped one from the HTTP request, so let's get the one we need so we can handle scoped instances
-                // TODO Aldo: concern about needing to import Microsoft.AspNetCore.Http in this proj
-                var serviceProvider = new HttpContextAccessor().HttpContext?.RequestServices ?? incomingServiceProvider;
-                var scope = serviceProvider.CreateScope();
-
-                var factories = new Dictionary<string, Func<IHssFhirRepository>>
-                {
-                    ["AD"] = scope.ServiceProvider.GetRequiredService<IAgingAndDisabilityFhirRepository>,
-                };
-
-                return new HssFhirRepositoryFactory(factories);
-            });
 
             return fhirServerBuilder;
         }

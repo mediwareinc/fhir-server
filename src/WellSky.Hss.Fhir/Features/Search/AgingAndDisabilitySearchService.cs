@@ -4,9 +4,9 @@
     using Microsoft.Health.Fhir.Core.Features.Persistence;
     using Microsoft.Health.Fhir.Core.Features.Search;
 
-    public class HssSearchService : SearchService
+    public class AgingAndDisabilitySearchService : SearchService
     {
-        public HssSearchService(ILogger<HssSearchService> logger, ISearchOptionsFactory searchOptionsFactory, IFhirDataStore fhirDataStore)
+        public AgingAndDisabilitySearchService(ILogger<AgingAndDisabilitySearchService> logger, ISearchOptionsFactory searchOptionsFactory, IFhirDataStore fhirDataStore)
             : base(searchOptionsFactory, fhirDataStore, logger)
         {
         }
