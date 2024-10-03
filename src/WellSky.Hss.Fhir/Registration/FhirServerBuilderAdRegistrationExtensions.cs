@@ -1,16 +1,15 @@
 ﻿namespace WellSky.Hss.Fhir.Registration
 {
-    using CustomerOrganization;
     using EnsureThat;
     using Features.Search;
     using Features.Storage;
-    using Features.Storage.AgingAndDisability.InternalRepositories;
+    using Features.Storage.CustomerOrganization;
+    using Features.Storage.FhirRepositories;
+    using Features.Storage.InternalRepositories;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Health.Extensions.DependencyInjection;
     using Microsoft.Health.Fhir.Core.Registration;
-    using WellSky.Hss.Fhir.Features.Storage.CustomerOrganization;
-    using WellSky.Hss.Fhir.Features.Storage.FhirRepositories;
 
     public static class FhirServerBuilderAdRegistrationExtensions
     {
@@ -22,7 +21,7 @@
             services.Add(provider =>
                 {
                     var config = new AgingAndDisabilityConfig();
-                    provider.GetService<IConfiguration>().GetSection("Hss").Bind(config);
+                    provider.GetService<IConfiguration>().GetSection("AgingAndDisability").Bind(config);
                     configureAction?.Invoke(config);
                     return config;
                 })

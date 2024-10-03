@@ -4,7 +4,7 @@
     using Dapper;
     using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Logging;
-    
+
     public abstract class BaseRepository
     {
         private readonly IDatabaseConnectionFactory _databaseConnectionFactory;
@@ -35,6 +35,7 @@
             }
         }
 
+        // TODO Aldo: Explore throwing custom exceptions
         private static void HandleException(SqlException ex, object item, bool isUpdate)
         {
             // SQL Server error numbers: https://docs.microsoft.com/en-us/sql/relational-databases/errors-events/database-engine-events-and-errors?view=sql-server-ver16
@@ -42,9 +43,9 @@
             {
                 case 2627:
                     if (isUpdate)
-                    { throw new ArgumentException($"Item already exists: {item}", ex); }  // TODO Aldo: Explore throwing custom exceptions
+                    { throw new ArgumentException($"Item already exists: {item}", ex); }
 
-                    throw new ArgumentException($"Item already exists: {item}", ex);  // TODO Aldo: Explore throwing custom exceptions
+                    throw new ArgumentException($"Item already exists: {item}", ex);
                 default:
                     throw new InvalidOperationException("Repository Error", ex);
             }

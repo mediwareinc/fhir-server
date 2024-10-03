@@ -19,6 +19,7 @@
             return new SqlConnection(await GetConnectionStringAsync(deploymentId));
         }
 
+        // TODO Aldo: Explore throwing custom exceptions
         private async Task<string> GetConnectionStringAsync(string deploymentId)
         {
             using var transaction = new TransactionScope(TransactionScopeOption.Suppress, TransactionScopeAsyncFlowOption.Enabled);
@@ -28,7 +29,7 @@
             transaction.Complete();
 
             if (database == null)
-            { throw new ArgumentException($"DeploymentId value '{deploymentId}' does not match any database."); } // TODO Aldo: Explore throwing custom exceptions
+            { throw new ArgumentException($"DeploymentId value '{deploymentId}' does not match any database."); } 
 
             var connectionString = BuildConnectionStringFromDatabase(database);
 

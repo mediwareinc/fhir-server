@@ -2,6 +2,6 @@
 {
     public class AgingAndDisabilityConfig
     {
-        public string? CustomerOrganizationDbConnectionString { get; set; }
+        public string CustomerOrganizationDbConnectionString { get; set; }
     }
 }

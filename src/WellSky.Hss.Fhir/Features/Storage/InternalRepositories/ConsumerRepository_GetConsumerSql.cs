@@ -1,4 +1,4 @@
-﻿namespace WellSky.Hss.Fhir.Features.Storage.AgingAndDisability.InternalRepositories
+﻿namespace WellSky.Hss.Fhir.Features.Storage.InternalRepositories
 {
     public partial class ConsumerRepository
     {

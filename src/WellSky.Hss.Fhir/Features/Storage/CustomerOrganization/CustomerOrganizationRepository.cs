@@ -1,8 +1,7 @@
-﻿using Dapper;
-using WellSky.Hss.Fhir.Features.Storage.CustomerOrganization;
-
-namespace WellSky.Hss.Fhir.CustomerOrganization
+﻿namespace WellSky.Hss.Fhir.Features.Storage.CustomerOrganization
 {
+    using Dapper;
+
     public partial class CustomerOrganizationRepository : ICustomerOrganizationRepository
     {
         private readonly IDatabaseConnection _database;

@@ -7,7 +7,7 @@ namespace WellSky.Hss.Fhir.Features.Storage.Mappers
     {
         public static Patient Map(Consumer consumer)
         {
-            // TODO Aldo: Map and return FHIR model from A&D data...
+            // Aldo: Map and return FHIR model from A&D data
             return new Patient
             {
                 Id = consumer.Id.ToString(),

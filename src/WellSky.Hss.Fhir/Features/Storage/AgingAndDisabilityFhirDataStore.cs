@@ -24,9 +24,9 @@
             return await _fhirRepository.GetAsync(key, "218"/*DeploymentId*/, cancellationToken);
         }
 
-        public async Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation resource, CancellationToken cancellationToken)
+        public Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation resource, CancellationToken cancellationToken)
         {
-            return await _fhirRepository.UpsertAsync(resource, "218"/*DeploymentId*/, cancellationToken);
+            throw new NotSupportedException();
         }
 
         public void Build(ICapabilityStatementBuilder builder)
@@ -42,25 +42,11 @@
                 .SyncSearchParametersAsync()
                 .AddGlobalSearchParameters()
                 .SyncProfiles();
-
-            //if (_coreFeatures.SupportsBatch)
-            //{
-            //    // Batch supported added in listedCapability
-            //    builder.AddGlobalInteraction(SystemRestfulInteraction.Batch);
-            //}
-
-            //if (_coreFeatures.SupportsTransaction)
-            //{
-            //    // Transaction supported added in listedCapability
-            //    builder.AddGlobalInteraction(SystemRestfulInteraction.Transaction);
-            //}
         }
 
-        private string DeploymentId => GetClaim("hss.api.deploymentId.dev"); // TODO Aldo: don't hardcode this and build it using env shortname.
-
+        // TODO Aldo: Extract() is returning empty even when the Principal claims are there. Check PrincipalClaimsExtractor to see why.
         private string GetClaim(string claimKey)
         {
-            // TODO Aldo: Extract() is returning empty even when the Principal claims are there. Check PrincipalClaimsExtractor to see why.
             return _claimsExtractor.Extract()?.SingleOrDefault(c => c.Key.Equals(claimKey, StringComparison.Ordinal)).Value;
         }
 

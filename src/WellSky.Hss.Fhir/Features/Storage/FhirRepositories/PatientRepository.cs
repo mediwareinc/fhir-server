@@ -6,7 +6,7 @@
     using Microsoft.Health.Fhir.Core.Features.Persistence;
     using Microsoft.Health.Fhir.Core.Models;
 
-    public class PatientRepository : IAgingAndDisabilityFhirRepository
+    public class PatientRepository : IPatientRepository
     {
         private readonly FhirJsonSerializer _fhirJsonSerializer;
         private readonly IConsumerRepository _consumerRepository;
@@ -17,17 +17,16 @@
             _consumerRepository = consumerRepository;
         }
 
+        // Aldo: Implementing this method to test connectivity with CustOrgDB and A%D
         public async Task<ResourceWrapper> GetAsync(ResourceKey key, string deploymentId, CancellationToken cancellationToken)
         {
-            // Implementing Get to test connectivity with CustOrgDB and A%D only
             var consumer = await _consumerRepository.GetAsync(deploymentId, Guid.Parse(key.Id));
             var patient = ConsumerMapper.Map(consumer);
             var resourceJson = await _fhirJsonSerializer.SerializeToStringAsync(patient);
 
-            // TODO Aldo: Research how to map ResourceWrapper, do we have everything we need from DB?
             return new ResourceWrapper(
-                key.Id, // TODO Aldo: Should use ReferenceId convention from here?
-                "1", // TODO Aldo: how are we planning to get version?
+                key.Id,
+                "1", // Aldo: how are we planning to handle versioning?
                 KnownResourceTypes.Patient,
                 new RawResource(resourceJson, FhirResourceFormat.Json, true),
                 new ResourceRequest("GET"),
@@ -38,22 +37,11 @@
                 null);
         }
 
-        // TODO Aldo: this method will only be called from Create requests for now
-        public async Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation resource, string deploymentId, CancellationToken cancellationToken)
+        public Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation resource, string deploymentId, CancellationToken cancellationToken)
         {
-            // TODO Aldo: Research how to map ResourceWrapper, do we have everything we need from DB?
-            var existingResource = new ResourceWrapper(
-                resource.Wrapper.ResourceId, // TODO Aldo: Should use ReferenceId convention from here?
-                "1", // TODO Aldo: how are we planning to get version?
-                KnownResourceTypes.Patient,
-                new RawResource("resource data as JSON here", FhirResourceFormat.Json, true),
-                new ResourceRequest("POST"),
-                DateTimeOffset.UtcNow,
-                false,
-                null,
-                null,
-                null);
-            return new UpsertOutcome(existingResource, SaveOutcomeType.Created);
+            // TODO Aldo: Research how to map UpsertOutcome result
+
+            throw new NotImplementedException();
         }
     }
 }

@@ -5,32 +5,26 @@
 
     public class AgingAndDisabilityFhirRepository : IAgingAndDisabilityFhirRepository
     {
-        private readonly IAgingAndDisabilityPatientRepository _patientRepository;
+        private readonly IPatientRepository _patientRepository;
 
-        public AgingAndDisabilityFhirRepository(IAgingAndDisabilityPatientRepository patientRepository)
+        public AgingAndDisabilityFhirRepository(IPatientRepository patientRepository)
         {
             _patientRepository = patientRepository;
         }
 
         public async Task<ResourceWrapper> GetAsync(ResourceKey key, string deploymentId, CancellationToken cancellationToken)
         {
-            switch (key.ResourceType)
+            return key.ResourceType switch
             {
-                case KnownResourceTypes.Patient:
-                    return await _patientRepository.GetAsync(key, deploymentId, cancellationToken);
-            }
+                // Aldo: testing DB conn with Patient Read
+                KnownResourceTypes.Patient => await _patientRepository.GetAsync(key, deploymentId, cancellationToken),
 
-            throw new NotImplementedException();
+                _ => throw new ArgumentException(key.ResourceType)
+            };
         }
 
-        public async Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation resource, string deploymentId, CancellationToken cancellationToken)
+        public Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation resource, string deploymentId, CancellationToken cancellationToken)
         {
-            switch (resource.Wrapper.ResourceTypeName)
-            {
-                case KnownResourceTypes.Patient:
-                    return await _patientRepository.UpsertAsync(resource, deploymentId, cancellationToken);
-            }
-
             throw new NotImplementedException();
         }
     }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WellSky.Hss.Fhir.CustomerOrganization
+﻿namespace WellSky.Hss.Fhir.Features.Storage.CustomerOrganization
 {
     public partial class CustomerOrganizationRepository
     {

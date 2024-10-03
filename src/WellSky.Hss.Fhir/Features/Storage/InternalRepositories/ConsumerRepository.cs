@@ -1,10 +1,9 @@
-﻿using Dapper;
-using Microsoft.Extensions.Logging;
-using WellSky.Hss.Fhir.Features.Storage.DataModels;
-using WellSky.Hss.Fhir.Features.Storage.InternalRepositories;
-
-namespace WellSky.Hss.Fhir.Features.Storage.AgingAndDisability.InternalRepositories
+﻿namespace WellSky.Hss.Fhir.Features.Storage.InternalRepositories
 {
+    using Dapper;
+    using DataModels;
+    using Microsoft.Extensions.Logging;
+
     public partial class ConsumerRepository : BaseRepository, IConsumerRepository
     {
         public ConsumerRepository(ILogger<ConsumerRepository> logger, IDatabaseConnectionFactory databaseConnectionFactory) : base(logger, databaseConnectionFactory)
@@ -20,7 +19,6 @@ namespace WellSky.Hss.Fhir.Features.Storage.AgingAndDisability.InternalRepositor
         {
             using var connection = await GetConnectionAsync(deploymentId);
 
-            // Get data from DB, call A&D->FHIR mapper and return wrapper.
             var consumer = (await connection.QueryAsync<Consumer, Client, Consumer>(GetConsumerSql, (consumer, client) =>
                  {
                      consumer.Client = client;
