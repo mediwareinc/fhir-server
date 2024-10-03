@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EnsureThat;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Health.Core.Features.Context;
@@ -50,6 +51,7 @@ namespace Microsoft.Health.Fhir.Core.Features.Conformance
         private readonly ISupportedProfilesStore _supportedProfiles;
         private readonly ILogger _logger;
         private readonly SearchParameterStatusManager _searchParameterStatusManager;
+        private readonly IConfiguration _appConfiguration;
 
         private ResourceElement _listedCapabilityStatement;
         private ResourceElement _backgroundJobCapabilityStatement;
@@ -67,7 +69,8 @@ namespace Microsoft.Health.Fhir.Core.Features.Conformance
             ILogger<SystemConformanceProvider> logger,
             IUrlResolver urlResolver,
             RequestContextAccessor<IFhirRequestContext> contextAccessor,
-            SearchParameterStatusManager searchParameterStatusManager)
+            SearchParameterStatusManager searchParameterStatusManager,
+            IConfiguration appConfiguration)
         {
             EnsureArg.IsNotNull(modelInfoProvider, nameof(modelInfoProvider));
             EnsureArg.IsNotNull(searchParameterDefinitionManagerResolver, nameof(searchParameterDefinitionManagerResolver));
@@ -78,6 +81,7 @@ namespace Microsoft.Health.Fhir.Core.Features.Conformance
             EnsureArg.IsNotNull(urlResolver, nameof(urlResolver));
             EnsureArg.IsNotNull(contextAccessor, nameof(contextAccessor));
             EnsureArg.IsNotNull(searchParameterStatusManager, nameof(searchParameterStatusManager));
+            EnsureArg.IsNotNull(appConfiguration, nameof(appConfiguration));
 
             _modelInfoProvider = modelInfoProvider;
             _searchParameterDefinitionManager = searchParameterDefinitionManagerResolver();
@@ -89,6 +93,7 @@ namespace Microsoft.Health.Fhir.Core.Features.Conformance
             _urlResolver = urlResolver;
             _contextAccessor = contextAccessor;
             _searchParameterStatusManager = searchParameterStatusManager;
+            _appConfiguration = appConfiguration;
 
             LogVersioningPolicyConfiguration();
         }
@@ -131,7 +136,7 @@ namespace Microsoft.Health.Fhir.Core.Features.Conformance
                             metadataUrl = _urlResolver.ResolveMetadataUrl(false);
                         }
 
-                        _builder = CapabilityStatementBuilder.Create(_modelInfoProvider, _searchParameterDefinitionManager, _configuration, _supportedProfiles, metadataUrl, _searchParameterStatusManager);
+                        _builder = CapabilityStatementBuilder.Create(_modelInfoProvider, _searchParameterDefinitionManager, _configuration, _supportedProfiles, metadataUrl, _searchParameterStatusManager, _appConfiguration);
 
                         using (IScoped<IEnumerable<IProvideCapability>> providerFactory = _capabilityProviders())
                         {

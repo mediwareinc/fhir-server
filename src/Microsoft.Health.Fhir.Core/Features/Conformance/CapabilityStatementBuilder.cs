@@ -11,6 +11,7 @@ using System.Linq;
 using EnsureThat;
 using Hl7.Fhir.ElementModel;
 using Hl7.Fhir.Serialization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.Health.Fhir.Core.Configs;
 using Microsoft.Health.Fhir.Core.Data;
@@ -36,13 +37,15 @@ namespace Microsoft.Health.Fhir.Core.Features.Conformance
         private readonly ISearchParameterDefinitionManager _searchParameterDefinitionManager;
         private readonly CoreFeatureConfiguration _configuration;
         private readonly ISupportedProfilesStore _supportedProfiles;
+        private readonly HashSet<string> _supportedResources;
 
         private CapabilityStatementBuilder(
             ListedCapabilityStatement statement,
             IModelInfoProvider modelInfoProvider,
             ISearchParameterDefinitionManager searchParameterDefinitionManager,
             IOptions<CoreFeatureConfiguration> configuration,
-            ISupportedProfilesStore supportedProfiles)
+            ISupportedProfilesStore supportedProfiles,
+            HashSet<string> supportedResources)
         {
             EnsureArg.IsNotNull(statement, nameof(statement));
             EnsureArg.IsNotNull(modelInfoProvider, nameof(modelInfoProvider));
@@ -55,6 +58,7 @@ namespace Microsoft.Health.Fhir.Core.Features.Conformance
             _searchParameterDefinitionManager = searchParameterDefinitionManager;
             _configuration = configuration.Value;
             _supportedProfiles = supportedProfiles;
+            _supportedResources = supportedResources;
         }
 
         public static ICapabilityStatementBuilder Create(
@@ -63,11 +67,15 @@ namespace Microsoft.Health.Fhir.Core.Features.Conformance
             IOptions<CoreFeatureConfiguration> configuration,
             ISupportedProfilesStore supportedProfiles,
             Uri metadataUrl,
-            SearchParameterStatusManager searchParameterStatusManager)
+            SearchParameterStatusManager searchParameterStatusManager,
+            IConfiguration appConfiguration)
         {
             EnsureArg.IsNotNull(modelInfoProvider, nameof(modelInfoProvider));
             EnsureArg.IsNotNull(searchParameterDefinitionManager, nameof(searchParameterDefinitionManager));
             EnsureArg.IsNotNull(metadataUrl, nameof(metadataUrl));
+            EnsureArg.IsNotNull(appConfiguration, nameof(appConfiguration));
+
+            var supportedResources = new HashSet<string>(appConfiguration.GetSection("FhirServer:SupportedResources").Get<string[]>());
 
             using Stream resourceStream = modelInfoProvider.OpenVersionedFileStream("BaseCapabilities.json");
             using var reader = new StreamReader(resourceStream);
@@ -93,7 +101,7 @@ namespace Microsoft.Health.Fhir.Core.Features.Conformance
             statement.Date = ProductVersionInfo.CreationTime.ToString("O");
             statement.Url = metadataUrl;
 
-            return new CapabilityStatementBuilder(statement, modelInfoProvider, searchParameterDefinitionManager, configuration, supportedProfiles);
+            return new CapabilityStatementBuilder(statement, modelInfoProvider, searchParameterDefinitionManager, configuration, supportedProfiles, supportedResources);
         }
 
         public ICapabilityStatementBuilder Apply(Action<ListedCapabilityStatement> action)
@@ -279,7 +287,7 @@ namespace Microsoft.Health.Fhir.Core.Features.Conformance
 
         public ICapabilityStatementBuilder PopulateDefaultResourceInteractions()
         {
-            foreach (string resource in _modelInfoProvider.GetResourceTypeNames())
+            foreach (string resource in _supportedResources ?? _modelInfoProvider.GetResourceTypeNames())
             {
                 // Parameters is a non-persisted resource used to pass information into and back from an operation.
                 if (string.Equals(resource, KnownResourceTypes.Parameters, StringComparison.Ordinal))
@@ -332,12 +340,12 @@ namespace Microsoft.Health.Fhir.Core.Features.Conformance
 
         public ICapabilityStatementBuilder SyncSearchParametersAsync()
         {
-            foreach (string resource in _modelInfoProvider.GetResourceTypeNames())
+            foreach (string resource in _supportedResources ?? _modelInfoProvider.GetResourceTypeNames())
             {
                 ApplyToResource(resource, c => c.SearchRevInclude.Clear());
             }
 
-            foreach (string resource in _modelInfoProvider.GetResourceTypeNames())
+            foreach (string resource in _supportedResources ?? _modelInfoProvider.GetResourceTypeNames())
             {
                 // Parameters is a non-persisted resource used to pass information into and back from an operation
                 if (string.Equals(resource, KnownResourceTypes.Parameters, StringComparison.Ordinal))
@@ -361,7 +369,7 @@ namespace Microsoft.Health.Fhir.Core.Features.Conformance
             // This line needs to come after the refresh because the refresh can trigger this method to run and can add duplicate values to the Profile in STU3.
             _statement.Profile.Clear();
 
-            foreach (string resource in _modelInfoProvider.GetResourceTypeNames())
+            foreach (string resource in _supportedResources ?? _modelInfoProvider.GetResourceTypeNames())
             {
                 // Parameters is a non-persisted resource used to pass information into and back from an operation
                 if (string.Equals(resource, KnownResourceTypes.Parameters, StringComparison.Ordinal))
