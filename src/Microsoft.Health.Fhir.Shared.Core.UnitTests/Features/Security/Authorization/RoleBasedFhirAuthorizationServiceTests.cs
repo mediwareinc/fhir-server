@@ -36,8 +36,8 @@ namespace Microsoft.Health.Fhir.Core.UnitTests.Features.Security.Authorization
             _authorizationConfiguration = fhirConfiguration.Security.Authorization;
             _authorizationConfiguration.Enabled = true;
             List<Role> roles = new List<Role>();
-            roles.Add(new Role("Read", DataActions.Read, "/"));
-            roles.Add(new Role("Write", DataActions.Write, "/"));
+            roles.Add(new Role("Read", DataActions.Read, "/", ["task"]));
+            roles.Add(new Role("Write", DataActions.Write, "/", ["task"]));
             _authorizationConfiguration.Roles = roles;
 
             _fhirRequestContextAccessor = Substitute.For<RequestContextAccessor<IFhirRequestContext>>();

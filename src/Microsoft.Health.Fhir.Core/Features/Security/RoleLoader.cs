@@ -86,7 +86,7 @@ namespace Microsoft.Health.Fhir.Core.Features.Security
             DataActions dataActions = roleContract.DataActions.Aggregate(default(DataActions), (acc, a) => acc | a);
             DataActions notDataActions = roleContract.NotDataActions.Aggregate(default(DataActions), (acc, a) => acc | a);
 
-            return new Role(roleContract.Name, dataActions & ~notDataActions, roleContract.Scopes.Single());
+            return new Role(roleContract.Name, dataActions & ~notDataActions, roleContract.Scopes.Single(), roleContract.ResourceTypes);
         }
 
         private class RolesContract
@@ -103,6 +103,8 @@ namespace Microsoft.Health.Fhir.Core.Features.Security
             public DataActions[] NotDataActions { get; set; }
 
             public string[] Scopes { get; set; }
+
+            public string[] ResourceTypes { get; set; } // Kayla added for POC
         }
     }
 }

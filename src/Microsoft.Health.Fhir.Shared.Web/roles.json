@@ -78,6 +78,19 @@
             "scopes": [
                 "/"
             ]
+        },
+        {
+            "name": "taskWriter",
+            "dataActions": [
+                "write"
+            ],
+            "notDataActions": [],
+            "scopes": [
+                "/"
+            ],
+            "resourceTypes": [
+                "task"
+            ]
         }
     ]
 }

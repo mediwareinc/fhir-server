@@ -26,6 +26,7 @@ using Microsoft.Health.Fhir.Azure;
 using Microsoft.Health.Fhir.Core.Configs;
 using Microsoft.Health.Fhir.Core.Extensions;
 using Microsoft.Health.Fhir.Core.Features;
+using Microsoft.Health.Fhir.Core.Features.Security.Authorization;
 using Microsoft.Health.Fhir.Core.Features.Telemetry;
 using Microsoft.Health.Fhir.Core.Logging.Metrics;
 using Microsoft.Health.Fhir.Core.Messages.Storage;
@@ -58,7 +59,13 @@ namespace Microsoft.Health.Fhir.Web
         {
             instanceId = $"{Configuration["WEBSITE_ROLE_INSTANCE_ID"]}--{Configuration["WEBSITE_INSTANCE_ID"]}--{Guid.NewGuid()}";
 
-            services.AddDevelopmentIdentityProvider(Configuration);
+            // Kayla added for POC
+            services.Configure<AuthenticationConfiguration>(Configuration.GetSection("FhirServer:Security:Authentication"));
+            services.AddHttpClient();
+            services.AddScoped<WellSkyOktaAuthorizationService>();
+            services.AddControllers();
+
+            // services.AddDevelopmentIdentityProvider(Configuration);
 
             Core.Registration.IFhirServerBuilder fhirServerBuilder =
                 services.AddFhirServer(
