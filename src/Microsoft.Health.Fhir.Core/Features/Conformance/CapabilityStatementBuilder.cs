@@ -277,9 +277,9 @@ namespace Microsoft.Health.Fhir.Core.Features.Conformance
             return this;
         }
 
-        public ICapabilityStatementBuilder PopulateDefaultResourceInteractions()
+        public ICapabilityStatementBuilder PopulateDefaultResourceInteractions(IReadOnlyList<string> supportedResources = null)
         {
-            foreach (string resource in _modelInfoProvider.GetResourceTypeNames())
+            foreach (string resource in supportedResources ?? _modelInfoProvider.GetResourceTypeNames())
             {
                 // Parameters is a non-persisted resource used to pass information into and back from an operation.
                 if (string.Equals(resource, KnownResourceTypes.Parameters, StringComparison.Ordinal))
