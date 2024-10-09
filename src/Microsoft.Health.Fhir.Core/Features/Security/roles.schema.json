@@ -63,15 +63,6 @@
                         },
                         "minItems": 1,
                         "maxItems": 1
-                    },
-                    "resourceTypes": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "examples": [
-                            "task"
-                        ]
                     }
                 },
                 "additionalProperties": false

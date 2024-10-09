@@ -5,17 +5,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Security.Claims;
-using System.Threading;
 using System.Threading.Tasks;
-using EnsureThat;
 using Microsoft.Extensions.Options;
-using Microsoft.Health.Core.Features.Context;
-using Microsoft.Health.Core.Features.Security.Authorization;
 using Microsoft.Health.Fhir.Core.Configs;
-using Microsoft.Health.Fhir.Core.Features.Context;
 using Microsoft.Health.Fhir.Core.Models;
 using Newtonsoft.Json.Linq;
 
@@ -24,22 +17,13 @@ namespace Microsoft.Health.Fhir.Core.Features.Security.Authorization
     /// <summary>
     /// A <see cref="IAuthorizationService"/> that determines access based on the current principal's role memberships and generates an Okta token
     /// </summary>
-    public class OktaAuthorizationService : IAuthorizationService<DataActions>
+    public class OktaAuthorizationService
     {
-        private readonly RequestContextAccessor<IFhirRequestContext> _requestContextAccessor;
-        private readonly Dictionary<string, Role> _roles;
-        private readonly string _rolesClaimName;
         private readonly HttpClient _httpClient;
         private readonly AuthenticationConfiguration _authConfig;
 
-        public OktaAuthorizationService(AuthorizationConfiguration authorizationConfiguration, RequestContextAccessor<IFhirRequestContext> requestContextAccessor, IHttpClientFactory httpClientFactory, IOptions<AuthenticationConfiguration> authConfigOptions)
+        public OktaAuthorizationService(IHttpClientFactory httpClientFactory, IOptions<AuthenticationConfiguration> authConfigOptions)
         {
-            EnsureArg.IsNotNull(authorizationConfiguration, nameof(authorizationConfiguration));
-            EnsureArg.IsNotNull(requestContextAccessor, nameof(requestContextAccessor));
-
-            _requestContextAccessor = requestContextAccessor;
-            _rolesClaimName = authorizationConfiguration.RolesClaim;
-            _roles = authorizationConfiguration.Roles.ToDictionary(r => r.Name, StringComparer.OrdinalIgnoreCase);
             _httpClient = httpClientFactory.CreateClient();
             _authConfig = authConfigOptions.Value;
         }

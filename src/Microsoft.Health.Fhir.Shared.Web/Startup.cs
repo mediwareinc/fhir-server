@@ -60,7 +60,6 @@ namespace Microsoft.Health.Fhir.Web
         {
             instanceId = $"{Configuration["WEBSITE_ROLE_INSTANCE_ID"]}--{Configuration["WEBSITE_INSTANCE_ID"]}--{Guid.NewGuid()}";
 
-            // Kayla added for POC
             services.Configure<AuthenticationConfiguration>(Configuration.GetSection("FhirServer:Security:Authentication"));
             services.AddHttpClient();
             services.AddScoped<OktaAuthorizationService>();
