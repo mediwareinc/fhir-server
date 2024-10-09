@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Logging;
 using Microsoft.Health.Fhir.Api.Features.Routing;
 using Microsoft.Health.Fhir.Core.Features.Security.Authorization;
 using Microsoft.Health.Fhir.Core.Models;
@@ -18,14 +17,14 @@ namespace Microsoft.Health.Fhir.Api.Controllers
     /// Controller responsible for authorization requests
     /// </summary>
     [AllowAnonymous]
-    public class WellSkyAuthorizationController : Controller
+    public class OktaAuthorizationController : Controller
     {
-        private readonly WellSkyOktaAuthorizationService _authorizationService;
+        private readonly OktaAuthorizationService _authorizationService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WellSkyAuthorizationController" /> class.
         /// </summary>
-        public WellSkyAuthorizationController(WellSkyOktaAuthorizationService authorizationService)
+        public OktaAuthorizationController(OktaAuthorizationService authorizationService)
         {
             _authorizationService = authorizationService;
         }
@@ -36,7 +35,7 @@ namespace Microsoft.Health.Fhir.Api.Controllers
         [HttpPost]
         [Route(KnownRoutes.GenerateToken)]
         [AllowAnonymous]
-        public async Task<ActionResult> GenerateOktaToken([FromBody] WellSkyAuthRequest request)
+        public async Task<ActionResult> GenerateOktaToken([FromBody] OktaAuthRequest request)
         {
             if (request == null || string.IsNullOrEmpty(request.ClientId) || string.IsNullOrEmpty(request.ClientSecret) || string.IsNullOrEmpty(request.Scope))
             {

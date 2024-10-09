@@ -63,7 +63,7 @@ namespace Microsoft.Health.Fhir.Web
             // Kayla added for POC
             services.Configure<AuthenticationConfiguration>(Configuration.GetSection("FhirServer:Security:Authentication"));
             services.AddHttpClient();
-            services.AddScoped<WellSkyOktaAuthorizationService>();
+            services.AddScoped<OktaAuthorizationService>();
             services.AddControllers();
 
             // services.AddDevelopmentIdentityProvider(Configuration);

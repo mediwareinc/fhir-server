@@ -6,7 +6,7 @@
 // Kayla added for POC
 namespace Microsoft.Health.Fhir.Core.Models
 {
-    public class WellSkyAuthRequest
+    public class OktaAuthRequest
     {
         public string ClientId { get; set; }
 
