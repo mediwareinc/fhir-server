@@ -20,14 +20,14 @@
             };
         }
 
-        public async Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation resource, string deploymentId, CancellationToken cancellationToken)
+        public async Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation operation, string deploymentId, CancellationToken cancellationToken)
         {
-            return resource.Wrapper.ResourceTypeName switch
+            return operation.Wrapper.ResourceTypeName switch
             {
-                KnownResourceTypes.DocumentReference => await documentReferenceRepository.UpsertAsync(resource, deploymentId, cancellationToken),
-                KnownResourceTypes.Task => await taskRepository.UpsertAsync(resource, deploymentId, cancellationToken),
+                KnownResourceTypes.DocumentReference => await documentReferenceRepository.UpsertAsync(operation, deploymentId, cancellationToken),
+                KnownResourceTypes.Task => await taskRepository.UpsertAsync(operation, deploymentId, cancellationToken),
 
-                _ => throw new ArgumentException(resource.Wrapper.ResourceTypeName)
+                _ => throw new ArgumentException(operation.Wrapper.ResourceTypeName)
             };
         }
     }

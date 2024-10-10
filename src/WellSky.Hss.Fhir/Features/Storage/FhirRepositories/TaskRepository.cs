@@ -9,6 +9,7 @@
 
     public class TaskRepository(
         FhirJsonSerializer fhirJsonSerializer,
+        FhirJsonParser fhirJsonParser,
         IActionItemRepository actionItemRepository)
         : ITaskRepository
     {
@@ -38,15 +39,16 @@
                 null);
         }
 
-        public async Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation resource, string deploymentId, CancellationToken cancellationToken)
+        public async Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation operation, string deploymentId, CancellationToken cancellationToken)
         {
+            var resource = await fhirJsonParser.ParseAsync<Task>(operation.Wrapper.RawResource.Data);
             // TODO: call FHIR to A&D mapper
             var actionItem = new ActionItem();
 
             // TODO Aldo: how to know this is called by Create and not Update?
             await actionItemRepository.AddAsync(deploymentId, actionItem);
 
-            return new UpsertOutcome(resource.Wrapper, SaveOutcomeType.Created);
+            return new UpsertOutcome(operation.Wrapper, SaveOutcomeType.Created);
         }
     }
 }

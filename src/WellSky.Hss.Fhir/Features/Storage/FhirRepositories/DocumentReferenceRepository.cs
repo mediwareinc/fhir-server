@@ -9,6 +9,7 @@
 
     public class DocumentReferenceRepository(
         FhirJsonSerializer fhirJsonSerializer,
+        FhirJsonParser fhirJsonParser,
         IJournalRepository journalRepository)
         : IDocumentReferenceRepository
     {
@@ -38,15 +39,16 @@
                 null);
         }
 
-        public async Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation resource, string deploymentId, CancellationToken cancellationToken)
+        public async Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation operation, string deploymentId, CancellationToken cancellationToken)
         {
+            var resource = await fhirJsonParser.ParseAsync<DocumentReference>(operation.Wrapper.RawResource.Data);
             // TODO: call FHIR to A&D mapper
             var journal = new Journal();
 
             // TODO Aldo: how to know this is called by Create and not Update?
             await journalRepository.AddAsync(deploymentId, journal);
 
-            return new UpsertOutcome(resource.Wrapper, SaveOutcomeType.Created);
+            return new UpsertOutcome(operation.Wrapper, SaveOutcomeType.Created);
         }
     }
 }
