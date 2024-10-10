@@ -65,6 +65,8 @@ namespace Microsoft.Health.Fhir.Core.Models
 
         public const string CareTeam = "CareTeam";
 
+        public const string Task = "Task"; // Aldo: Added
+
         public const string All = "all";
     }
 }

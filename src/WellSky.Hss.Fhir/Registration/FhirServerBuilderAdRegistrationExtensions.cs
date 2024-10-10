@@ -53,6 +53,11 @@
                 .AsSelf()
                 .AsImplementedInterfaces();
 
+            services.Add<DatabaseConnection>()
+                .Scoped()
+                .AsSelf()
+                .AsImplementedInterfaces();
+
             services.Add<CustomerOrganizationRepository>()
                 .Scoped()
                 .AsSelf()
@@ -63,17 +68,22 @@
                 .AsSelf()
                 .AsImplementedInterfaces();
 
-            services.Add<PatientRepository>()
+            services.Add<DocumentReferenceRepository>()
                 .Scoped()
                 .AsSelf()
                 .AsImplementedInterfaces();
 
-            services.Add<ConsumerRepository>()
+            services.Add<TaskRepository>()
                 .Scoped()
                 .AsSelf()
                 .AsImplementedInterfaces();
 
-            services.Add<DatabaseConnection>()
+            services.Add<JournalRepository>()
+                .Scoped()
+                .AsSelf()
+                .AsImplementedInterfaces();
+
+            services.Add<ActionItemRepository>()
                 .Scoped()
                 .AsSelf()
                 .AsImplementedInterfaces();

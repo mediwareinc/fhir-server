@@ -59,6 +59,8 @@ namespace Microsoft.Health.Fhir.Core.Features.Resources.Create
 
             await _referenceResolver.ResolveReferencesAsync(resource, _referenceIdDictionary, resource.TypeName, cancellationToken);
 
+            // Aldo: This wrapper contains the incoming resource in JSON format (RawResource.Data property)
+            // Aldo: Additionally, it assigns by default a GUID value as Id, which matches the type A&D Ids use.
             ResourceWrapper resourceWrapper = ResourceWrapperFactory.CreateResourceWrapper(resource, ResourceIdProvider, deleted: false, keepMeta: true);
             bool keepHistory = await ConformanceProvider.Value.CanKeepHistory(resource.TypeName, cancellationToken);
 

@@ -6,37 +6,36 @@
     using Microsoft.Health.Fhir.Core.Features.Conformance;
     using Microsoft.Health.Fhir.Core.Features.Persistence;
 
-    internal sealed class AgingAndDisabilityFhirDataStore : IFhirDataStore, IProvideCapability
+    internal sealed class AgingAndDisabilityFhirDataStore(
+        ILogger<AgingAndDisabilityFhirDataStore> logger,
+        IClaimsExtractor claimsExtractor,
+        IAgingAndDisabilityFhirRepository agingAndDisabilityFhirRepository)
+        : IFhirDataStore, IProvideCapability
     {
-        private readonly ILogger<AgingAndDisabilityFhirDataStore> _logger;
-        private readonly IClaimsExtractor _claimsExtractor;
-        private readonly IAgingAndDisabilityFhirRepository _fhirRepository;
+        // This claim was manually added for testing, we may want to add an environment suffix later.
+        // Needs to be added in appsettings.json -> FhirServer.Security.PrincipalClaims
+        private const string DeploymentIdClaim = "hss.fhirserver.deploymentId"; 
+        private readonly ILogger<AgingAndDisabilityFhirDataStore> _logger = EnsureArg.IsNotNull(logger, nameof(logger));
+        private readonly IClaimsExtractor _claimsExtractor = EnsureArg.IsNotNull(claimsExtractor, nameof(claimsExtractor));
+        private readonly IAgingAndDisabilityFhirRepository _fhirRepository = EnsureArg.IsNotNull(agingAndDisabilityFhirRepository, nameof(agingAndDisabilityFhirRepository));
 
-        public AgingAndDisabilityFhirDataStore(ILogger<AgingAndDisabilityFhirDataStore> logger, IClaimsExtractor claimsExtractor, IAgingAndDisabilityFhirRepository agingAndDisabilityFhirRepository)
-        {
-            _logger = EnsureArg.IsNotNull(logger, nameof(logger));
-            _claimsExtractor = EnsureArg.IsNotNull(claimsExtractor, nameof(claimsExtractor));
-            _fhirRepository = EnsureArg.IsNotNull(agingAndDisabilityFhirRepository, nameof(agingAndDisabilityFhirRepository));
-        }
-
+        // Not planning to have a full implementation for now, only for testing connectivity with DBs
         public async Task<ResourceWrapper> GetAsync(ResourceKey key, CancellationToken cancellationToken)
         {
-            return await _fhirRepository.GetAsync(key, "218"/*DeploymentId*/, cancellationToken);
+            return await _fhirRepository.GetAsync(key, DeploymentId, cancellationToken);
         }
 
-        public Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation resource, CancellationToken cancellationToken)
+        public async Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation resource, CancellationToken cancellationToken)
         {
-            throw new NotSupportedException();
+            return await _fhirRepository.UpsertAsync(resource, DeploymentId, cancellationToken);
         }
 
         public void Build(ICapabilityStatementBuilder builder)
         {
             EnsureArg.IsNotNull(builder, nameof(builder));
 
-            // SLC: this is how we limit the resource types we want to support
-            // The compatibility statements also automatically created based on these settings
-            // Any resource type or HTTP action not supported causes HTTP 505 error to be returned to caller
-            var supportedResources = new List<string> { "CapabilityStatement", "Organization", "Parameters", "Patient" };
+            // TODO Aldo: Check if this line could be related to https://wellsky.atlassian.net/browse/MSAMS-16526
+            var supportedResources = new List<string> { "CapabilityStatement", "DocumentReference", "Task" };
 
             builder.PopulateDefaultResourceInteractions(supportedResources)
                 .SyncSearchParametersAsync()
@@ -44,7 +43,8 @@
                 .SyncProfiles();
         }
 
-        // TODO Aldo: Extract() is returning empty even when the Principal claims are there. Check PrincipalClaimsExtractor to see why.
+        private string DeploymentId => GetClaim(DeploymentIdClaim);
+
         private string GetClaim(string claimKey)
         {
             return _claimsExtractor.Extract()?.SingleOrDefault(c => c.Key.Equals(claimKey, StringComparison.Ordinal)).Value;
