@@ -1,5 +1,6 @@
 ﻿namespace WellSky.Hss.Fhir.Features.Storage
 {
+    using FhirRepositories;
     using Microsoft.Health.Fhir.Core.Features.Persistence;
     using Microsoft.Health.Fhir.Core.Models;
 
