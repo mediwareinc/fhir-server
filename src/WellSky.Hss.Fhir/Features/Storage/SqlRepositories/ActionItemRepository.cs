@@ -20,10 +20,5 @@ namespace WellSky.Hss.Fhir.Features.Storage.SqlRepositories
 
             // TODO: Implement Insert logic
         }
-
-        public Task<ActionItem> GetAsync(string deploymentId, Guid id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
