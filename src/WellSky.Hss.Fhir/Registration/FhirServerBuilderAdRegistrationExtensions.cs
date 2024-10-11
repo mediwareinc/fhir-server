@@ -5,7 +5,7 @@
     using Features.Storage;
     using Features.Storage.CustomerOrganization;
     using Features.Storage.FhirRepositories;
-    using Features.Storage.InternalRepositories;
+    using Features.Storage.SqlRepositories;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Health.Extensions.DependencyInjection;

@@ -1,10 +1,10 @@
-﻿namespace WellSky.Hss.Fhir.Features.Storage
-{
-    using System.Data;
-    using Dapper;
-    using Microsoft.Data.SqlClient;
-    using Microsoft.Extensions.Logging;
+﻿using System.Data;
+using Dapper;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
 
+namespace WellSky.Hss.Fhir.Features.Storage.SqlRepositories
+{
     public abstract class BaseRepository
     {
         private readonly IDatabaseConnectionFactory _databaseConnectionFactory;

@@ -1,9 +1,10 @@
-﻿namespace WellSky.Hss.Fhir.Features.Storage.FhirRepositories
+﻿using WellSky.Hss.Fhir.Features.Storage.SqlRepositories;
+
+namespace WellSky.Hss.Fhir.Features.Storage.FhirRepositories
 {
     using DataModels;
     using Hl7.Fhir.Model;
     using Hl7.Fhir.Serialization;
-    using InternalRepositories;
     using Microsoft.Health.Fhir.Core.Features.Persistence;
     using Microsoft.Health.Fhir.Core.Models;
 
@@ -41,14 +42,19 @@
 
         public async Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation operation, string deploymentId, CancellationToken cancellationToken)
         {
-            var resource = await fhirJsonParser.ParseAsync<DocumentReference>(operation.Wrapper.RawResource.Data);
+            DocumentReference resource = await fhirJsonParser.ParseAsync<DocumentReference>(operation.Wrapper.RawResource.Data);
+
             // TODO: call FHIR to A&D mapper
             var journal = new Journal();
 
-            // TODO Aldo: how to know this is called by Create and not Update?
-            await journalRepository.AddAsync(deploymentId, journal);
+            // Currently UpsertAsync will only be used for Create requests
+            if (operation.Wrapper.Request.Method == HttpMethod.Post.ToString())
+            {
+                await journalRepository.AddAsync(deploymentId, journal);
+                return new UpsertOutcome(operation.Wrapper, SaveOutcomeType.Created);
+            }
 
-            return new UpsertOutcome(operation.Wrapper, SaveOutcomeType.Created);
+            throw new NotSupportedException();
         }
     }
 }

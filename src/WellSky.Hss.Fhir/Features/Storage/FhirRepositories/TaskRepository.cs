@@ -1,9 +1,10 @@
-﻿namespace WellSky.Hss.Fhir.Features.Storage.FhirRepositories
+﻿using WellSky.Hss.Fhir.Features.Storage.SqlRepositories;
+
+namespace WellSky.Hss.Fhir.Features.Storage.FhirRepositories
 {
     using DataModels;
     using Hl7.Fhir.Model;
     using Hl7.Fhir.Serialization;
-    using InternalRepositories;
     using Microsoft.Health.Fhir.Core.Features.Persistence;
     using Microsoft.Health.Fhir.Core.Models;
 

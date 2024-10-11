@@ -1,4 +1,4 @@
-﻿namespace WellSky.Hss.Fhir.Features.Storage.InternalRepositories
+﻿namespace WellSky.Hss.Fhir.Features.Storage.SqlRepositories
 {
     public partial class JournalRepository
     {

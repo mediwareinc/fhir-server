@@ -19,10 +19,9 @@
         private readonly IClaimsExtractor _claimsExtractor = EnsureArg.IsNotNull(claimsExtractor, nameof(claimsExtractor));
         private readonly IAgingAndDisabilityFhirRepository _fhirRepository = EnsureArg.IsNotNull(agingAndDisabilityFhirRepository, nameof(agingAndDisabilityFhirRepository));
 
-        // Not planning to have a full implementation for now, only for testing connectivity with DBs
-        public async Task<ResourceWrapper> GetAsync(ResourceKey key, CancellationToken cancellationToken)
+        public Task<ResourceWrapper> GetAsync(ResourceKey key, CancellationToken cancellationToken)
         {
-            return await _fhirRepository.GetAsync(key, DeploymentId, cancellationToken);
+            throw new NotImplementedException();
         }
 
         public async Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation resource, CancellationToken cancellationToken)
