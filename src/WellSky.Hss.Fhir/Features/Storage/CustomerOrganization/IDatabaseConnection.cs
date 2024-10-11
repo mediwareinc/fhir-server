@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WellSky.Hss.Fhir.Features.Storage.CustomerOrganization
+﻿namespace WellSky.Hss.Fhir.Features.Storage.CustomerOrganization
 {
+    using System.Data;
+
     public interface IDatabaseConnection
     {
         IDbConnection GetConnection();

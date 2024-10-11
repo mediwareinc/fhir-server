@@ -8,7 +8,7 @@ namespace WellSky.Hss.Fhir.Features.Storage.SqlRepositories
     public partial class ActionItemRepository(
         ILogger<ActionItemRepository> logger,
         IDatabaseConnectionFactory databaseConnectionFactory)
-        : BaseRepository(logger, databaseConnectionFactory), IActionItemRepository
+        : BaseSqlRepository(logger, databaseConnectionFactory), IActionItemRepository
     {
         public async Task AddAsync(string deploymentId, ActionItem actionItem)
         {

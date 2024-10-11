@@ -1,22 +1,15 @@
-﻿using System.Data;
-using Dapper;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Logging;
-
-namespace WellSky.Hss.Fhir.Features.Storage.SqlRepositories
+﻿namespace WellSky.Hss.Fhir.Features.Storage.SqlRepositories
 {
-    public abstract class BaseRepository
+    using System.Data;
+    using Dapper;
+    using EnsureThat;
+    using Microsoft.Data.SqlClient;
+    using Microsoft.Extensions.Logging;
+
+    public abstract class BaseSqlRepository(ILogger logger, IDatabaseConnectionFactory databaseConnectionFactory)
     {
-        private readonly IDatabaseConnectionFactory _databaseConnectionFactory;
-
-        protected ILogger Logger;
-
-        protected BaseRepository(ILogger logger
-            , IDatabaseConnectionFactory databaseConnectionFactory)
-        {
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _databaseConnectionFactory = databaseConnectionFactory ?? throw new ArgumentNullException(nameof(databaseConnectionFactory));
-        }
+        private readonly IDatabaseConnectionFactory _databaseConnectionFactory = EnsureArg.IsNotNull(databaseConnectionFactory, nameof(databaseConnectionFactory));
+        protected ILogger Logger = EnsureArg.IsNotNull(logger, nameof(logger));
 
         protected Task<IDbConnection> GetConnectionAsync(string deploymentId)
         {
@@ -35,7 +28,6 @@ namespace WellSky.Hss.Fhir.Features.Storage.SqlRepositories
             }
         }
 
-        // TODO Aldo: Explore throwing custom exceptions
         private static void HandleException(SqlException ex, object item, bool isUpdate)
         {
             // SQL Server error numbers: https://docs.microsoft.com/en-us/sql/relational-databases/errors-events/database-engine-events-and-errors?view=sql-server-ver16

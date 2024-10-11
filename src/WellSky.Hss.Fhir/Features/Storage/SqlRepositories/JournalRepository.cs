@@ -8,7 +8,7 @@ namespace WellSky.Hss.Fhir.Features.Storage.SqlRepositories
     public partial class JournalRepository(
         ILogger<JournalRepository> logger,
         IDatabaseConnectionFactory databaseConnectionFactory)
-        : BaseRepository(logger, databaseConnectionFactory), IJournalRepository
+        : BaseSqlRepository(logger, databaseConnectionFactory), IJournalRepository
     {
         public async Task AddAsync(string deploymentId, Journal journal)
         {

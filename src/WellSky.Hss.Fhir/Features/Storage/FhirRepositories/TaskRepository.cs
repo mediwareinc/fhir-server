@@ -1,31 +1,26 @@
 ﻿namespace WellSky.Hss.Fhir.Features.Storage.FhirRepositories
 {
     using DataModels;
+    using EnsureThat;
     using Hl7.Fhir.Model;
     using Hl7.Fhir.Serialization;
-    using Microsoft.Health.Fhir.Core.Features.Persistence;
     using SqlRepositories;
 
-    public class TaskRepository(
-        FhirJsonParser fhirJsonParser,
-        IActionItemRepository actionItemRepository)
-        : ITaskRepository
+    public class TaskRepository(FhirJsonParser fhirJsonParser, IActionItemRepository actionItemRepository)
+        : BaseFhirRepository<ActionItem, Task>(fhirJsonParser), ITaskRepository
     {
-        public async Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation operation, string deploymentId, CancellationToken cancellationToken)
+        private readonly IActionItemRepository _actionItemRepository =
+            EnsureArg.IsNotNull(actionItemRepository, nameof(actionItemRepository));
+
+        protected override ActionItem MapToAdModel(Task resource)
         {
-            Task resource = await fhirJsonParser.ParseAsync<Task>(operation.Wrapper.RawResource.Data);
-
             // TODO: call FHIR to A&D mapper
-            var actionItem = new ActionItem();
+            return new ActionItem();
+        }
 
-            // Currently UpsertAsync will only be used for Create requests
-            if (operation.Wrapper.Request.Method == HttpMethod.Post.ToString())
-            {
-                await actionItemRepository.AddAsync(deploymentId, actionItem);
-                return new UpsertOutcome(operation.Wrapper, SaveOutcomeType.Created);
-            }
-
-            return new UpsertOutcome(operation.Wrapper, SaveOutcomeType.Created);
+        protected override async System.Threading.Tasks.Task AddAsync(string deploymentId, ActionItem adModel)
+        {
+            await _actionItemRepository.AddAsync(deploymentId, adModel);
         }
     }
 }

@@ -1,20 +1,19 @@
-﻿using System.Data;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Logging;
-
-namespace WellSky.Hss.Fhir.Features.Storage.CustomerOrganization
+﻿namespace WellSky.Hss.Fhir.Features.Storage.CustomerOrganization
 {
-    public class DatabaseConnection : IDatabaseConnection
-    {
-        private readonly ILogger<DatabaseConnection> _logger;
-        private readonly AgingAndDisabilityConfig _agingAndDisabilityConfig;
+    using System.Data;
+    using EnsureThat;
+    using Microsoft.Data.SqlClient;
+    using Microsoft.Extensions.Logging;
 
-        public DatabaseConnection(ILogger<DatabaseConnection> logger
-            , AgingAndDisabilityConfig agingAndDisabilityConfig)
-        {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _agingAndDisabilityConfig = agingAndDisabilityConfig;
-        }
+    public class DatabaseConnection(
+        ILogger<DatabaseConnection> logger,
+        AgingAndDisabilityConfig agingAndDisabilityConfig)
+        : IDatabaseConnection
+    {
+        private readonly ILogger<DatabaseConnection> _logger = EnsureArg.IsNotNull(logger, nameof(logger));
+
+        private readonly AgingAndDisabilityConfig _agingAndDisabilityConfig =
+            EnsureArg.IsNotNull(agingAndDisabilityConfig, nameof(agingAndDisabilityConfig));
 
         public IDbConnection GetConnection()
         {

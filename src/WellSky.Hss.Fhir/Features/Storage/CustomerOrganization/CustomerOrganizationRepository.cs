@@ -1,24 +1,22 @@
 ﻿namespace WellSky.Hss.Fhir.Features.Storage.CustomerOrganization
 {
+    using System.Data;
     using Dapper;
+    using EnsureThat;
 
-    public partial class CustomerOrganizationRepository : ICustomerOrganizationRepository
+    public partial class CustomerOrganizationRepository(IDatabaseConnection database) : ICustomerOrganizationRepository
     {
-        private readonly IDatabaseConnection _database;
-
-        public CustomerOrganizationRepository(IDatabaseConnection database)
-        {
-            _database = database ?? throw new ArgumentNullException(nameof(database));
-        }
+        private readonly IDatabaseConnection _database = EnsureArg.IsNotNull(database, nameof(database));
 
         public async Task<ClientDatabase> GetClientDatabaseAsync(string deploymentId)
         {
-            using var connection = _database.GetConnection();
+            using IDbConnection connection = _database.GetConnection();
 
-            var database = await connection.QuerySingleOrDefaultAsync<ClientDatabase>(GetClientDatabaseSql, new
-            {
-                deploymentId
-            });
+            ClientDatabase database = await connection.QuerySingleOrDefaultAsync<ClientDatabase>(GetClientDatabaseSql,
+                new
+                {
+                    deploymentId
+                });
 
             return database;
         }

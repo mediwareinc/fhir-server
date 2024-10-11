@@ -3,16 +3,14 @@
     using System.Data;
     using System.Transactions;
     using CustomerOrganization;
+    using EnsureThat;
     using Microsoft.Data.SqlClient;
 
-    public sealed class DatabaseConnectionFactory : IDatabaseConnectionFactory
+    public sealed class DatabaseConnectionFactory(ICustomerOrganizationRepository customerRepository)
+        : IDatabaseConnectionFactory
     {
-        private readonly ICustomerOrganizationRepository _repository;
-
-        public DatabaseConnectionFactory(ICustomerOrganizationRepository customerRepository)
-        {
-            _repository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
-        }
+        private readonly ICustomerOrganizationRepository _repository =
+            EnsureArg.IsNotNull(customerRepository, nameof(customerRepository));
 
         public async Task<IDbConnection> GetConnectionByDeploymentIdAsync(string deploymentId)
         {
@@ -22,14 +20,17 @@
         // TODO Aldo: Explore throwing custom exceptions
         private async Task<string> GetConnectionStringAsync(string deploymentId)
         {
-            using var transaction = new TransactionScope(TransactionScopeOption.Suppress, TransactionScopeAsyncFlowOption.Enabled);
+            using var transaction =
+                new TransactionScope(TransactionScopeOption.Suppress, TransactionScopeAsyncFlowOption.Enabled);
 
             var database = await _repository.GetClientDatabaseAsync(deploymentId);
 
             transaction.Complete();
 
             if (database == null)
-            { throw new ArgumentException($"DeploymentId value '{deploymentId}' does not match any database."); } 
+            {
+                throw new ArgumentException($"DeploymentId value '{deploymentId}' does not match any database.");
+            }
 
             var connectionString = BuildConnectionStringFromDatabase(database);
 
@@ -39,7 +40,8 @@
         private static string BuildConnectionStringFromDatabase(ClientDatabase database)
         {
             // TODO Aldo: Adding TrustServerCertificate=True; only for local testing
-            return $"Server={database.ServerName};Database={database.DatabaseName};User Id={database.UserName};Password={database.Password};TrustServerCertificate=True;";
+            return
+                $"Server={database.ServerName};Database={database.DatabaseName};User Id={database.UserName};Password={database.Password};TrustServerCertificate=True;";
         }
     }
 }
