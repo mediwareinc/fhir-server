@@ -1,45 +1,16 @@
-﻿using WellSky.Hss.Fhir.Features.Storage.SqlRepositories;
-
-namespace WellSky.Hss.Fhir.Features.Storage.FhirRepositories
+﻿namespace WellSky.Hss.Fhir.Features.Storage.FhirRepositories
 {
     using DataModels;
     using Hl7.Fhir.Model;
     using Hl7.Fhir.Serialization;
     using Microsoft.Health.Fhir.Core.Features.Persistence;
-    using Microsoft.Health.Fhir.Core.Models;
+    using SqlRepositories;
 
     public class DocumentReferenceRepository(
-        FhirJsonSerializer fhirJsonSerializer,
         FhirJsonParser fhirJsonParser,
         IJournalRepository journalRepository)
         : IDocumentReferenceRepository
     {
-        // Not planning to have a full implementation for now, only for testing connectivity with DBs
-        public async Task<ResourceWrapper> GetAsync(ResourceKey key, string deploymentId, CancellationToken cancellationToken)
-        {
-            Journal journal = await journalRepository.GetAsync(deploymentId, Guid.Parse(key.Id));
-
-            // TODO: Call A&D to FHIR mapper
-            var resource = new DocumentReference
-            {
-                Id = journal.Id.ToString()
-            };
-
-            var resourceJson = await fhirJsonSerializer.SerializeToStringAsync(resource);
-
-            return new ResourceWrapper(
-                key.Id,
-                "1",
-                KnownResourceTypes.DocumentReference,
-                new RawResource(resourceJson, FhirResourceFormat.Json, true),
-                new ResourceRequest("GET"),
-                DateTimeOffset.UtcNow,
-                false,
-                null,
-                null,
-                null);
-        }
-
         public async Task<UpsertOutcome> UpsertAsync(ResourceWrapperOperation operation, string deploymentId, CancellationToken cancellationToken)
         {
             DocumentReference resource = await fhirJsonParser.ParseAsync<DocumentReference>(operation.Wrapper.RawResource.Data);
