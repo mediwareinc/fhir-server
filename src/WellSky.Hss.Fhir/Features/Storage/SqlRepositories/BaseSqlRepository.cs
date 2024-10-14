@@ -22,9 +22,13 @@
             {
                 await connection.ExecuteAsync(sql, item);
             }
-            catch (SqlException ex)
+            //catch (SqlException ex)
+            //{
+            //    HandleException(ex, item, isUpdate);
+            //}
+            catch (Exception ex) // TODO: note, when SqlException the catch it misses many different errors i've tested so far
             {
-                HandleException(ex, item, isUpdate);
+                throw new ArgumentException($"Issue: {sql}", ex);
             }
         }
 

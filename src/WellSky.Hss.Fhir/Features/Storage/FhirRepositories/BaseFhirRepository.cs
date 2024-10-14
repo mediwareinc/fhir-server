@@ -22,7 +22,7 @@
             // Currently UpsertAsync will only be used for Create requests
             if (operation.Wrapper.Request.Method == HttpMethod.Post.ToString())
             {
-                await AddAsync(deploymentId, adModel);
+                await AddAsync(deploymentId, adModel); // TODO: do we want to return the request model or the model actually inserted into the DB after mapping?
                 return new UpsertOutcome(operation.Wrapper, SaveOutcomeType.Created);
             }
 

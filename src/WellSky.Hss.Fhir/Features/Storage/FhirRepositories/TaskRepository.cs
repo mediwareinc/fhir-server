@@ -1,4 +1,6 @@
-﻿namespace WellSky.Hss.Fhir.Features.Storage.FhirRepositories
+﻿using WellSky.Hss.Fhir.Features.Storage.Mappers;
+
+namespace WellSky.Hss.Fhir.Features.Storage.FhirRepositories
 {
     using DataModels;
     using EnsureThat;
@@ -14,8 +16,9 @@
 
         protected override ActionItem MapToAdModel(Task resource)
         {
-            // TODO: call FHIR to A&D mapper
-            return new ActionItem();
+            ActionItem adActionItem = ActionItemTaskMapper.ToAdActionItem(resource);
+
+            return adActionItem;
         }
 
         protected override async System.Threading.Tasks.Task AddAsync(string deploymentId, ActionItem adModel)

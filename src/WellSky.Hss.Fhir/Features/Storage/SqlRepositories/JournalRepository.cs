@@ -14,11 +14,7 @@ namespace WellSky.Hss.Fhir.Features.Storage.SqlRepositories
         {
             using IDbConnection connection = await GetConnectionAsync(deploymentId);
 
-            // TODO: Remove this once actual INSERT implementation is done, this is only for testing connectivity with DBs
-            var localJournalId = "4D1F04EF-F6DC-4B2E-9D56-A46C2585A962";
-            Journal dataFromDb = (await connection.QueryAsync<Journal>(GetJournalSql, param: new { id = localJournalId })).FirstOrDefault();
-
-            // TODO: Implement INSERT logic
+            await ExecuteSqlAsync(connection, AddJournalSql, journal, isUpdate: false);
         }
     }
 }
